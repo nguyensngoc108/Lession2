@@ -1,19 +1,82 @@
+<?php
+
+
+require_once './categoryController.php';
+require_once './paginationController.php';
+require_once './parentChildController.php';
+require_once './popUpController.php';
+require_once './searchController.php';
+
+require_once 'helper/db_connection.php';
+require_once 'helper/saveCategory.php';
+
+require_once 'models/categoriesModel.php';
+require_once 'models/childCategoryModel.php';
+require_once 'models/paginationModel.php';
+require_once 'models/searchModel.php';
+
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rock Paper Scissors</title>
-    <?php require_once 'bootstrap.php'; ?>
+    <title>Quản lý danh mục</title>
+    <!-- Add necessary stylesheets and scripts here -->
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to Rock Paper Scissors</h1>
-        <p><a href="login.php">Please Log In</a></p>
-    <hr>
-        <p><a href="register.php">New member?</a>
-        <p>Attempt to go to <a href="game.php">game.php</a> without logging in - it should fail with an error message.</p>
-    </div>
+    <h1>Quản lý danh mục</h1>
+
+    <!-- Display the list of categories -->
+    <?php
+        // Instantiate required objects
+        $categoriesModel = new CategoriesModel();
+        $paginationModel = new PaginationModel();
+        $categoryController = new CategoryController($categoriesModel, $paginationModel);
+        
+        // Retrieve categories based on pagination
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $categories = $categoryController->getCategoriesByPage($page, 10);
+
+        // Display the categories
+        foreach ($categories as $category) {
+            echo "<p>{$category['code']} - {$category['name']}</p>";
+            // Display child categories recursively if any
+            $categoryController->displayChildCategories($category['id'], 1);
+        }
+    ?>
+
+    <!-- Add category form or popup for adding/editing category -->
+    <?php
+        $popUpController = new PopUpController();
+        // Check if an action is requested (e.g., add, edit, copy)
+        if (isset($_GET['action'])) {
+            $action = $_GET['action'];
+            if ($action === 'add' || $action === 'edit' || $action === 'copy') {
+                // Render the category form as a popup or on the page
+                $categoryForm = $categoryController->renderCategoryForm($action);
+                $popUpController->displayPopUp($categoryForm);
+            }
+        }
+    ?>
+
+    <!-- Category search functionality -->
+    <form method="GET" action="searchController.php">
+        <input type="text" name="search" placeholder="Search category">
+        <input type="submit" value="Search">
+    </form>
+
+    <!-- Pagination links -->
+    <?php
+        $paginationController = new PaginationController($categoriesModel);
+        $totalPages = $paginationController->getTotalPages(10);
+        $paginationController->displayPaginationLinks($totalPages);
+    ?>
+
+    <!-- Add necessary scripts here -->
+
 </body>
+
 </html>
+
+
+
