@@ -10,7 +10,7 @@ require_once './searchController.php';
 require_once 'helper/db_connection.php';
 require_once 'helper/saveCategory.php';
 
-require_once 'models/categoriesModel.php';
+require_once 'models/categoryModel.php';
 require_once 'models/childCategoryModel.php';
 require_once 'models/paginationModel.php';
 require_once 'models/searchModel.php';
@@ -29,7 +29,7 @@ require_once 'models/searchModel.php';
     <!-- Display the list of categories -->
     <?php
         // Instantiate required objects
-        $categoriesModel = new CategoriesModel();
+        $categoriesModel = new CategoryModel();
         $paginationModel = new PaginationModel();
         $categoryController = new CategoryController($categoriesModel, $paginationModel);
         
