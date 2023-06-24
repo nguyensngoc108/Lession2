@@ -1,82 +1,148 @@
 <?php
+require_once 'database.php';
+require_once 'models/CategoryModel.php';
+require_once 'controllers/CategoryController.php';
+require_once 'helpers/PaginationHelper.php';
 
+// Create a new database connection
+$conn = OpenCon();
 
-require_once './categoryController.php';
-require_once './paginationController.php';
-require_once './parentChildController.php';
-require_once './popUpController.php';
-require_once './searchController.php';
+// Create instances of the model, controller, and pagination helper
+$categoryModel = new CategoryModel($conn);
+$categoryController = new CategoryController($categoryModel);
+$paginationHelper = new PaginationHelper();
 
-require_once 'helper/db_connection.php';
-require_once 'helper/saveCategory.php';
+// Handle form submissions and actions
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['add'])) {
+        // Handle adding a new category
+        $categoryController->addCategory($_POST);
+    } elseif (isset($_POST['edit'])) {
+        // Handle editing a category
+        $categoryController->editCategory($_POST);
+    } elseif (isset($_POST['copy'])) {
+        // Handle copying a category
+        $categoryController->copyCategory($_POST);
+    }
+}
 
-require_once 'models/categoryModel.php';
-require_once 'models/childCategoryModel.php';
-require_once 'models/paginationModel.php';
-require_once 'models/searchModel.php';
+// Handle search query
+$searchQuery = isset($_GET['search']) ? $_GET['search'] : '';
 
+// Get the total count of categories
+$totalCount = $categoryModel->getCategoryCount($searchQuery);
+
+// Set the current page number
+$currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
+
+// Set the number of categories per page
+$categoriesPerPage = 10;
+
+// Calculate the offset for pagination
+$offset = ($currentPage - 1) * $categoriesPerPage;
+
+// Get the categories for the current page
+$categories = $categoryModel->getCategories($offset, $categoriesPerPage, $searchQuery);
+
+// Close the database connection
+CloseCon($conn);
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Quản lý danh mục</title>
-    <!-- Add necessary stylesheets and scripts here -->
+    <title>Category Management</title>
+    <link rel="stylesheet" href="assets/bootstrap.css">
+    <style>
+        /* Additional CSS styles */
+    </style>
 </head>
 <body>
-    <h1>Quản lý danh mục</h1>
+    <h1>Category Management</h1>
 
-    <!-- Display the list of categories -->
-    <?php
-        // Instantiate required objects
-        $categoriesModel = new CategoryModel();
-        $paginationModel = new PaginationModel();
-        $categoryController = new CategoryController($categoriesModel, $paginationModel);
-        
-        // Retrieve categories based on pagination
-        $page = isset($_GET['page']) ? $_GET['page'] : 1;
-        $categories = $categoryController->getCategoriesByPage($page, 10);
+    <!-- Category List -->
+    <div>
+        <h2>Categories</h2>
 
-        // Display the categories
-        foreach ($categories as $category) {
-            echo "<p>{$category['code']} - {$category['name']}</p>";
-            // Display child categories recursively if any
-            $categoryController->displayChildCategories($category['id'], 1);
-        }
-    ?>
+        <!-- Search Form -->
+        <form action="index.php" method="GET">
+            <input type="text" name="search" placeholder="Search by category name" value="<?php echo $searchQuery; ?>">
+            <button type="submit">Search</button>
+        </form>
 
-    <!-- Add category form or popup for adding/editing category -->
-    <?php
-        $popUpController = new PopUpController();
-        // Check if an action is requested (e.g., add, edit, copy)
-        if (isset($_GET['action'])) {
-            $action = $_GET['action'];
-            if ($action === 'add' || $action === 'edit' || $action === 'copy') {
-                // Render the category form as a popup or on the page
-                $categoryForm = $categoryController->renderCategoryForm($action);
-                $popUpController->displayPopUp($categoryForm);
-            }
-        }
-    ?>
+        <!-- Category Table -->
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Parent Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($categories as $category) { ?>
+                    <tr>
+                        <td><?php echo $category['code']; ?></td>
+                        <td><?php echo $category['name']; ?></td>
+                        <td><?php echo $category['parent_category']; ?></td>
+                        <td>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#editCategoryModal<?php echo $category['id']; ?>">Edit</button>
+                            <button class="btn btn-secondary" data-toggle="modal" data-target="#copyCategoryModal<?php echo $category['id']; ?>">Copy</button>
+                            <button class="btn btn-info" data-toggle="modal" data-target="#categoryDetailsModal<?php echo $category['id']; ?>">Details</button>
+                        </td>
+                    </tr>
 
-    <!-- Category search functionality -->
-    <form method="GET" action="searchController.php">
-        <input type="text" name="search" placeholder="Search category">
-        <input type="submit" value="Search">
-    </form>
+                    <!-- Edit Category Form (Popup) -->
+                    <div id="editCategoryModal<?php echo $category['id']; ?>" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Edit Category Form content -->
+                                <?php include 'views/EditCategoryView.php'; ?>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Pagination links -->
-    <?php
-        $paginationController = new PaginationController($categoriesModel);
-        $totalPages = $paginationController->getTotalPages(10);
-        $paginationController->displayPaginationLinks($totalPages);
-    ?>
+                    <!-- Copy Category Form (Popup) -->
+                    <div id="copyCategoryModal<?php echo $category['id']; ?>" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Copy Category Form content -->
+                                <?php include 'views/CopyCategoryView.php'; ?>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Add necessary scripts here -->
+                    <!-- Category Details (Popup) -->
+                    <div id="categoryDetailsModal<?php echo $category['id']; ?>" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Category Details content -->
+                                <?php include 'views/CategoryDetailsView.php'; ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            </tbody>
+        </table>
 
+        <!-- Pagination -->
+        <?php echo $paginationHelper->generatePaginationLinks($totalCount, $categoriesPerPage, $currentPage); ?>
+    </div>
+
+    <!-- Add Category Form (Popup) -->
+    <div id="addCategoryModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Add Category Form content -->
+                <?php include 'views/AddCategoryView.php'; ?>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/bootstrap.js"></script>
+    <script>
+        // Additional JavaScript code
+    </script>
 </body>
-
 </html>
-
-
-
