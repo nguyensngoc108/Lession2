@@ -48,18 +48,11 @@ CloseCon($dbConnection);
 <body>
     <h1>Category Management</h1>
 
-   
-
     <!-- Search Form -->
     <form action="CategoryManagementView.php" method="GET">
         <input type="text" name="search" placeholder="Search by category name" value="<?php echo $searchQuery; ?>">
         <button type="submit">Search</button>
     </form>
-    <br>
-
-     <!-- Add new category form -->
-        <form action="AddCategoryView.php" method="GET">
-            <button type="submit" id<Add new category</button>
 
     <!-- Category List -->
     <div>
@@ -79,7 +72,7 @@ CloseCon($dbConnection);
                     <tr>
                         <td><?php echo $category['code']; ?></td>
                         <td><?php echo $category['name']; ?></td>
-                        <td><?php echo $category['parent_id']; ?></td>
+                        <td><?php echo $category['parent_category']; ?></td>
                         <td>
                             <a href="EditCategoryView.php?id=<?php echo $category['id']; ?>">Edit</a>
                             <a href="CopyCategoryView.php?id=<?php echo $category['id']; ?>">Copy</a>

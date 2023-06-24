@@ -1,5 +1,6 @@
 <?php
 require_once 'database.php';
+
 class CategoryModel {
     private $conn;
 
@@ -23,6 +24,17 @@ class CategoryModel {
         return $count;
     }
 
+    public function getCategoryById($categoryId) {
+        $sql = "SELECT * FROM categories WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $categoryId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $category = $result->fetch_assoc();
+        $stmt->close();
+        return $category;
+    }
+
     public function getCategories($offset, $limit, $searchQuery = '') {
         $sql = "SELECT * FROM categories";
         if (!empty($searchQuery)) {
@@ -41,33 +53,32 @@ class CategoryModel {
         return $categories;
     }
 
-    // Add more methods as needed for CRUD operations and other category-related functionalities
-    public function addCategory($code, $name, $parentCategory) {
+    public function addCategory($code, $name, $parentId) {
         // Perform any necessary validation or data sanitization
-        
+
         // Prepare the SQL statement
-        $sql = "INSERT INTO categories (code, name, parent_category) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO categories (code, name, parent_id) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("sss", $code, $name, $parentCategory);
-        
+        $stmt->bind_param("ssi", $code, $name, $parentId);
+
         // Execute the statement
         $stmt->execute();
-        
+
         // Close the statement
         $stmt->close();
     }
 
-    public function updateCategory($categoryId, $code, $name, $parentCategory) {
+    public function updateCategory($categoryId, $code, $name, $parentId) {
         // Perform any necessary validation or data sanitization
-        
+
         // Prepare the SQL statement
-        $sql = "UPDATE categories SET code = ?, name = ?, parent_category = ? WHERE id = ?";
+        $sql = "UPDATE categories SET code = ?, name = ?, parent_id = ? WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("sssi", $code, $name, $parentCategory, $categoryId);
-        
+        $stmt->bind_param("ssii", $code, $name, $parentId, $categoryId);
+
         // Execute the statement
         $stmt->execute();
-        
+
         // Close the statement
         $stmt->close();
     }
@@ -80,12 +91,13 @@ class CategoryModel {
         $stmt->execute();
         $result = $stmt->get_result();
         $category = $result->fetch_assoc();
-        
+
         // Create a new category using the retrieved data
-        $this->addCategory($category['code'], $category['name'], $category['parent_category']);
-        
+        $this->addCategory($category['code'], $category['name'], $category['parent_id']);
+
         // Close the statement and result set
         $stmt->close();
         $result->close();
     }
 }
+?>

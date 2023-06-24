@@ -1,8 +1,36 @@
-<!-- CopyCategoryView.php -->
-
 <?php
 require_once 'controllers/CategoryController.php';
 require_once 'models/CategoryModel.php';
+
+// Create an instance of the CategoryModel
+$dbConnection = OpenCon();
+$categoryModel = new CategoryModel($dbConnection);
+
+// Create an instance of the CategoryController
+$categoryController = new CategoryController($categoryModel);
+
+// Retrieve the category ID from the request
+$categoryId = isset($_GET['id']) ? $_GET['id'] : '';
+
+// Retrieve the category details
+$category = $categoryModel->getCategoryById($categoryId);
+
+// Check if the category exists
+if (!$category) {
+    // Handle the case when the category does not exist
+    echo "Category not found.";
+    exit;
+}
+
+// Check if the form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Call the corresponding controller method to copy the category
+    $categoryController->copyCategory(['category_id' => $categoryId]);
+
+    // Redirect to the category management page or perform any other actions
+    header("Location: CategoryManagementView.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -17,35 +45,9 @@ require_once 'models/CategoryModel.php';
 <body>
     <h1>Copy Category</h1>
 
-    <?php
-    // Check if form is submitted
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Instantiate the CategoryController and CategoryModel
-        $categoryModel = new CategoryModel($conn);
-        $categoryController = new CategoryController($categoryModel);
-
-        // Call the copyCategory method in the controller
-        $categoryController->copyCategory($_POST);
-    }
-    ?>
-
-    <form action="CopyCategoryView.php" method="POST">
-        <!-- Display the list of available categories to copy -->
-        <label for="category_id">Select a Category to Copy:</label>
-        <select name="category_id" id="category_id">
-            <?php
-            // Fetch the list of categories from the CategoryModel
-            $categoryModel = new CategoryModel($conn);
-            $categories = $categoryModel->getCategories();
-
-            // Iterate over the categories and display them as options in the select dropdown
-            foreach ($categories as $category) {
-                echo '<option value="' . $category['id'] . '">' . $category['name'] . '</option>';
-            }
-            ?>
-        </select>
-
-        <button type="submit">Copy Category</button>
+    <form action="CopyCategoryView.php?id=<?php echo $categoryId; ?>" method="POST">
+        <p>Are you sure you want to copy the category "<?php echo $category['name']; ?>"?</p>
+        <button type="submit">Copy</button>
     </form>
 
     <script src="assets/bootstrap/bootstrap.js"></script>

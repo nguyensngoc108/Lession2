@@ -13,7 +13,7 @@ class CategoryController {
         // Extract the form data
         $code = $formData['code'];
         $name = $formData['name'];
-        $parentCategory = $formData['parent_category'];
+        $parentCategory = $formData['parent_id'];
 
         // Perform any validation or data sanitization if needed
 
@@ -29,7 +29,7 @@ class CategoryController {
         $categoryId = $formData['category_id'];
         $code = $formData['code'];
         $name = $formData['name'];
-        $parentCategory = $formData['parent_category'];
+        $parentCategory = $formData['parent_id'];
 
         // Perform any validation or data sanitization if needed
 
