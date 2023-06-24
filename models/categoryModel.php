@@ -35,6 +35,7 @@ class CategoryModel {
         return $category;
     }
 
+
     public function getCategories($offset, $limit, $searchQuery = '') {
         $sql = "SELECT * FROM categories";
         if (!empty($searchQuery)) {
@@ -52,6 +53,19 @@ class CategoryModel {
 
         return $categories;
     }
+    public function getAllCategories() {
+        $sql = "SELECT * FROM categories";
+    
+        $result = $this->conn->query($sql);
+        $categories = [];
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $categories[] = $row;
+            }
+        }
+    
+        return $categories;
+    }
 
     public function addCategory($code, $name, $parentId) {
         // Perform any necessary validation or data sanitization
@@ -60,7 +74,7 @@ class CategoryModel {
         $sql = "INSERT INTO categories (code, name, parent_id) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ssi", $code, $name, $parentId);
-
+        
         // Execute the statement
         $stmt->execute();
 
@@ -68,17 +82,18 @@ class CategoryModel {
         $stmt->close();
     }
 
-    public function updateCategory($categoryId, $code, $name, $parentId) {
+    public function editCategory($categoryId, $code, $name, $parentId) {
         // Perform any necessary validation or data sanitization
 
         // Prepare the SQL statement
         $sql = "UPDATE categories SET code = ?, name = ?, parent_id = ? WHERE id = ?";
+       
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ssii", $code, $name, $parentId, $categoryId);
 
         // Execute the statement
         $stmt->execute();
-
+       
         // Close the statement
         $stmt->close();
     }

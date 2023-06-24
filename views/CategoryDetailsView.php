@@ -27,26 +27,44 @@ if (!$category) {
 <html>
 <head>
     <title>Category Details</title>
-    <link rel="stylesheet" href="assets/bootstrap/bootstrap.css">
-    <style>
-        /* Additional CSS styles */
-    </style>
+    <link rel="stylesheet" href="assets/bootstrap.css">
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <h1>Category Details</h1>
+    <div class="container">
+        <h1>Category Details</h1>
 
-    <!-- Display Category Details -->
-    <div>
-        <h2>Category Information</h2>
+        <!-- Display Category Details -->
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Category Information</h2>
 
-        <p><strong>Code:</strong> <?php echo $category['code']; ?></p>
-        <p><strong>Name:</strong> <?php echo $category['name']; ?></p>
-        <p><strong>Parent Category:</strong> <?php echo $category['parent_id']; ?></p>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label"><strong>Code:</strong></label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static"><?php echo $category['code']; ?></p>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label"><strong>Name:</strong></label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static"><?php echo $category['name']; ?></p>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label"><strong>Parent Category:</strong></label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static"><?php echo $category['parent_id']; ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="assets/bootstrap/bootstrap.js"></script>
-    <script>
-        // Additional JavaScript code
-    </script>
+    <script src="assets/bootstrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 </body>
 </html>

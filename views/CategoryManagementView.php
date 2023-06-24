@@ -1,102 +1,101 @@
-<?php
-require_once 'controllers/CategoryController.php';
-require_once 'models/CategoryModel.php';
-require_once 'helpers/PaginationHelper.php';
-// require_once 'database.php';
-
-// Create an instance of the CategoryModel
-$dbConnection = OpenCon();
-$categoryModel = new CategoryModel($dbConnection);
-
-// Create an instance of the CategoryController
-$categoryController = new CategoryController($categoryModel);
-
-// Retrieve the search query from the request
-$searchQuery = isset($_GET['search']) ? $_GET['search'] : '';
-
-// Retrieve the current page number from the request
-$currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-
-// Set the number of categories to display per page
-$categoriesPerPage = 10;
-
-// Calculate the offset for pagination
-$offset = ($currentPage - 1) * $categoriesPerPage;
-
-// Retrieve the total number of categories
-$totalCount = $categoryModel->getCategoryCount($searchQuery);
-
-// Retrieve the categories for the current page
-$categories = $categoryModel->getCategories($offset, $categoriesPerPage, $searchQuery);
-
-// Create an instance of the PaginationHelper
-$paginationHelper = new PaginationHelper();
-
-// Close the database connection
-CloseCon($dbConnection);
-?>
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Category Management</title>
-    <link rel="stylesheet" href="assets/bootstrap/bootstrap.css">
-    <style>
-        /* Additional CSS styles */
-    </style>
+    <link rel="stylesheet" href="assets/bootstrap.css">
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
 </head>
 <body>
-    <h1>Category Management</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 style ="padding-top: 50px" >Categories</h1>
+            </div>
+            <div class="col-md-6 text-right" id="logo">
+                <img src="assets/logo.png" alt="Logo">
+            </div>
+        </div>
 
-   
+        <!-- Search Form -->
+        <div class="row mt-3" id ="search-bar">
+            <div class="col-md-6">
+                <form action="index.php" method="GET" class="form-inline" >
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search by category name" value="<?php echo $searchQuery; ?>">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6 text-right">
+            <a href="index.php?action=add" class="btn btn-success"><i class="fas fa-plus-circle"></i></a>
+            </div>
+        </div>
 
-    <!-- Search Form -->
-    <form action="CategoryManagementView.php" method="GET">
-        <input type="text" name="search" placeholder="Search by category name" value="<?php echo $searchQuery; ?>">
-        <button type="submit">Search</button>
-    </form>
-    <br>
+        <!-- Category List -->
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <h2>Categories</h2>
 
-     <!-- Add new category form -->
-        <form action="AddCategoryView.php" method="GET">
-            <button type="submit" id<Add new category</button>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($categories as $category) { ?>
+                            <tr>
+                                <td><?php echo $category['id']; ?></td>
+                                <td><?php echo $category['name']; ?></td>
+                                <td>
+                                <a href="?action=edit&id=<?php echo $category['id']; ?>"><i class="fas fa-edit"></i></a>
+                                <a href="?action=copy&id=<?php echo $category['id']; ?>" data-toggle="modal" data-target="#copyCategoryModal"><i class="fas fa-copy"></i></a>
+                                <a href="?action=details&id=<?php echo $category['id']; ?>"><i class="fas fa-info-circle"></i></a>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
 
-    <!-- Category List -->
-    <div>
-        <h2>Categories</h2>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Code</th>
-                    <th>Name</th>
-                    <th>Parent Category</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($categories as $category) { ?>
-                    <tr>
-                        <td><?php echo $category['code']; ?></td>
-                        <td><?php echo $category['name']; ?></td>
-                        <td><?php echo $category['parent_id']; ?></td>
-                        <td>
-                            <a href="EditCategoryView.php?id=<?php echo $category['id']; ?>">Edit</a>
-                            <a href="CopyCategoryView.php?id=<?php echo $category['id']; ?>">Copy</a>
-                            <a href="CategoryDetailsView.php?id=<?php echo $category['id']; ?>">Details</a>
-                        </td>
-                    </tr>
-                <?php } ?>
-            </tbody>
-        </table>
-
-        <!-- Pagination -->
-        <?php echo $paginationHelper->generatePaginationLinks($totalCount, $categoriesPerPage, $currentPage); ?>
+                <!-- Pagination -->
+                <div class="pagination">
+            <?php echo $paginationHelper->generatePaginationLinks($totalCount, $categoriesPerPage, $currentPage); ?>
+                 </div>
+            </div>
+        </div>
     </div>
 
-    <script src="assets/bootstrap/bootstrap.js"></script>
+
+    <div id="copyCategoryModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Copy Category</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="copyCategoryFrame" src="../CopyCategoryView.php" width="10%" height="400"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/bootstrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
     <script>
-        // Additional JavaScript code
+        $('#copyCategoryModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var categoryId = button.data('category-id');
+            var modal = $(this);
+            modal.find('.modal-body #copyCategoryFrame').attr('src', '../CopyCategoryView.php?id=' + categoryId);
+        });
     </script>
+
 </body>
 </html>
