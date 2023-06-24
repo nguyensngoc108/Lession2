@@ -13,7 +13,7 @@ To set up the project, follow these steps:
 2. Clone this repository to your desired directory.
 3. Open the `database.php` file and update the database connection settings (`$dbhost`, `$dbuser`, `$dbpass`, `$db`, `$dbport`) according to your environment.
 4. Create a new database named `category_management` in phpMyAdmin.
-5. Import the database schema from the provided SQL file into the `category_management` database(database file is formatted as json, remember to convert to sql if necessary).
+5. Import the database schema from the provided SQL file into the `category_management` database(database file is formatted as JSON, remember to convert to sql if necessary).
 6. Start your local web server (e.g., Apache) and ensure it is configured to run PHP files.
 7. Access the application by opening a web browser and navigating to the URL where the project is hosted (e.g., `http://localhost/category-web`).
 
