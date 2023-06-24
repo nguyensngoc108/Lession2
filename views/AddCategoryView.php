@@ -37,15 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <h1>Add Category</h1>
 
-    <form action="AddCategoryView.php" method="POST">
+    <form action="index.php?action=add" method="POST">
         <label for="code">Code:</label>
         <input type="text" id="code" name="code" required>
         <br>
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
         <br>
-        <label for="parent_category">Parent Category:</label>
-        <input type="text" id="parent_category" name="parent_category">
+        <label for="parent_id">Parent Category:</label>
+        <input type="text" id="parent_id" name="parent_id">
         <br>
         <button type="submit">Add Category</button>
     </form>
