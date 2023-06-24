@@ -1,6 +1,7 @@
 # Category Web
 
 This project is a category management web application implemented using PHP, MySQL, and the MVC (Model-View-Controller) architectural pattern. It allows users to manage categories with hierarchical relationships, perform CRUD (Create, Read, Update, Delete) operations, search categories by name, and paginate the results.
+<br>
 <div id="top" align="center">
 <img src="assets/screenshots/main.png" alt="Banner">
 </div>
@@ -22,9 +23,7 @@ To set up the project, follow these steps:
 The entry point of the application is `index.php`, which renders the `CategoryManagementView`. This view displays a list of categories with their code, name, and parent category. From this view, you can perform various actions:
 
 - Edit: Clicking on the "Edit" button next to a category opens the `EditCategoryView`, where you can modify the category's code, name, and parent category and save the changes.
-<div id="top" align="center">
-<img src="assets/screenshots/main.png" alt="Banner">
-</div>
+
 - Add New: Clicking on the "Add New" button opens the `AddCategoryView`, allowing you to enter the code, name, and parent category for a new category and save it.
 - Copy: Clicking on the "Copy" button next to a category opens the `CopyCategoryView`, where you can select a category to copy and specify the new code, name, and parent category for the copy.
 - Details: Clicking on the "Details" button next to a category opens the `CategoryDetailsView`, which shows detailed information about the category, including its code, name, parent category, and child categories.
