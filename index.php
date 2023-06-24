@@ -15,17 +15,34 @@ $categoryController = new CategoryController($categoryModel);
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 switch ($action) {
+
     case 'edit':
-        // Handle the edit category action
-        $categoryId = isset($_GET['id']) ? $_GET['id'] : 0;
-
-        // Retrieve the category details from the model based on the category ID
-        $category = $categoryModel->getCategoryById($categoryId);
-
-        // Include the EditCategoryView file and pass the category details
-        include 'views/EditCategoryView.php';
+        $categoryId = $_GET['id'] ?? 0;
+        if (empty($categoryId)) {
+            echo('Not found category');
+            exit();
+        }
+    
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $formData = $_POST;
+            
+            // Call the corresponding controller method to edit the category
+            $categoryController->editCategory($formData);
+    
+            // Redirect back to index.php
+            header("Location: index.php");
+            exit();
+        } else {
+            // Retrieve the category details from the model based on the category ID
+            $category = $categoryModel->getCategoryById($categoryId);
+            
+            // Retrieve all categories for the parent category dropdown
+            $categories = $categoryModel->getAllCategories();
+            
+            // Display the EditCategoryView
+            include 'views/EditCategoryView.php';
+        }
         break;
-
     case 'add':
         // Handle the add new category action
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -33,9 +50,9 @@ switch ($action) {
 
             // Call the corresponding controller method to add the category
             $categoryController->addCategory($formData);
-
+            echo('test');
             // Redirect or perform any other actions after adding the category
-
+           header("Location: index.php");
         } else {
             // Display the AddCategoryView
             include 'views/AddCategoryView.php';
@@ -51,7 +68,7 @@ switch ($action) {
             $categoryController->copyCategory($formData);
 
             // Redirect or perform any other actions after copying the category
-            
+            header("Location: index.php");
         } else {
             // Display the CopyCategoryView
             include 'views/CopyCategoryView.php';
@@ -74,6 +91,7 @@ switch ($action) {
 
         // Retrieve the search query from the request
         $searchQuery = isset($_GET['search']) ? $_GET['search'] : '';
+
 
         // Retrieve the current page number from the request
         $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
