@@ -1,5 +1,9 @@
 # Category Web
 
+<br>
+
+Link to try the project: [Category Web](https://categoriesnn.000webhostapp.com/)
+
 This project is a category management web application implemented using PHP, MySQL, and the MVC (Model-View-Controller) architectural pattern. It allows users to manage categories with hierarchical relationships, perform CRUD (Create, Read, Update, Delete) operations, search categories by name, and paginate the results.
 <br>
 <div id="top" align="center">
