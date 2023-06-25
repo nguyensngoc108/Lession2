@@ -31,7 +31,7 @@
                 </form>
             </div>
             <div class="col-md-6 text-right">
-            <a href="index.php" class="btn btn-success"><i class="fas fa-plus-circle"></i></a>
+            <a href="index.php?action=add" class="btn btn-success"><i class="fas fa-plus-circle"></i></a>
             </div>
         </div>
 

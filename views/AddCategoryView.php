@@ -13,7 +13,7 @@
     <div class="container">
         <h1>Add Category</h1>
 
-        <form action="index.php?action=add" method="POST">
+        <form action="index.php" method="POST">
             <div class="form-group">
                 <label for="code">Code:</label>
                 <input type="text" id="code" name="code" class="form-control" required>
