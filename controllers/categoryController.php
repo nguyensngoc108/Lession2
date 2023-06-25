@@ -19,8 +19,9 @@ class CategoryController {
 
         // Call the corresponding model method to add the category
         $this->categoryModel->addCategory($code, $name, $parentCategory);
-
+        
         // Redirect or perform any other actions after adding the category
+        
     }
 
     public function editCategory($formData) {

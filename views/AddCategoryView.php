@@ -1,3 +1,27 @@
+<?php
+require_once 'controllers/CategoryController.php';
+require_once 'models/CategoryModel.php';
+
+// Create an instance of the CategoryModel
+$dbConnection = OpenCon();
+$categoryModel = new CategoryModel($dbConnection);
+
+// Create an instance of the CategoryController
+$categoryController = new CategoryController($categoryModel);
+
+// Handle the form submission if the request method is POST
+if (!empty($_POST)) {
+   $formData = $_POST;
+
+    $categoryController->addCategory($formData);
+
+    // Redirect or perform any other actions after adding the category
+    header("Location: index.php");
+    exit();
+    
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +37,7 @@
     <div class="container">
         <h1>Add Category</h1>
 
-        <form action="index.php" method="POST">
+        <form action="index.php?action=add" method="POST">
             <div class="form-group">
                 <label for="code">Code:</label>
                 <input type="text" id="code" name="code" class="form-control" required>

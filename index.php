@@ -14,6 +14,7 @@ $categoryController = new CategoryController($categoryModel);
 // Handle different actions based on the request
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
+
 switch ($action) {
 
     case 'edit':
@@ -43,14 +44,13 @@ switch ($action) {
             include 'views/EditCategoryView.php';
         }
         break;
-    case 'add':
+    case 'add': 
+        
         // Handle the add new category action
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $formData = $_POST;
-
             // Call the corresponding controller method to add the category
             $categoryController->addCategory($formData);
-            echo('test');
             // Redirect or perform any other actions after adding the category
            header("Location: index.php");
         } else {
@@ -60,6 +60,7 @@ switch ($action) {
         break;
 
     case 'copy':
+        
         // Handle the copy category action
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $formData = $_POST;
@@ -85,6 +86,7 @@ switch ($action) {
         // Include the CategoryDetailsView file and pass the category details
         include 'views/CategoryDetailsView.php';
         break;
+
 
     default:
         // Display the CategoryManagementView
